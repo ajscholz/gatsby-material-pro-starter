@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // nodejs library to set properties for components
@@ -13,8 +14,9 @@ import Hidden from "@material-ui/core/Hidden";
 import Drawer from "@material-ui/core/Drawer";
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
+import Close from "@material-ui/icons/Close";
 // core components
-import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
+import headerStyle from "assets/jss/material-kit-pro-react/components/headerStyle.jsx";
 
 class Header extends React.Component {
   constructor(props) {
@@ -35,7 +37,7 @@ class Header extends React.Component {
   }
   headerColorChange() {
     const { classes, color, changeColorOnScroll } = this.props;
-    const windowsScrollTop = typeof window !== 'undefined' && window.pageYOffset;
+    const windowsScrollTop = window.pageYOffset;
     if (windowsScrollTop > changeColorOnScroll.height) {
       document.body
         .getElementsByTagName("header")[0]
@@ -54,41 +56,25 @@ class Header extends React.Component {
   }
   componentWillUnmount() {
     if (this.props.changeColorOnScroll) {
-      typeof window !== 'undefined' && window.removeEventListener("scroll", this.headerColorChange);
+      window.removeEventListener("scroll", this.headerColorChange);
     }
   }
   render() {
-    const {
-      classes,
-      color,
-      rightLinks,
-      leftLinks,
-      brand,
-      fixed,
-      absolute
-    } = this.props;
+    const { classes, color, links, brand, fixed, absolute } = this.props;
     const appBarClasses = classNames({
       [classes.appBar]: true,
       [classes[color]]: color,
       [classes.absolute]: absolute,
       [classes.fixed]: fixed
     });
-    const brandComponent = <Button className={classes.title}>{brand}</Button>;
     return (
       <AppBar className={appBarClasses}>
         <Toolbar className={classes.container}>
-          {leftLinks !== undefined ? brandComponent : null}
-          <div className={classes.flex}>
-            {leftLinks !== undefined ? (
-              <Hidden smDown implementation="css">
-                {leftLinks}
-              </Hidden>
-            ) : (
-              brandComponent
-            )}
-          </div>
-          <Hidden smDown implementation="css">
-            {rightLinks}
+          <Button className={classes.title}>
+            <Link to="/">{brand}</Link>
+          </Button>
+          <Hidden smDown implementation="css" className={classes.hidden}>
+            <div className={classes.collapse}>{links}</div>
           </Hidden>
           <Hidden mdUp>
             <IconButton
@@ -110,10 +96,15 @@ class Header extends React.Component {
             }}
             onClose={this.handleDrawerToggle}
           >
-            <div className={classes.appResponsive}>
-              {leftLinks}
-              {rightLinks}
-            </div>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={this.handleDrawerToggle}
+              className={classes.closeButtonDrawer}
+            >
+              <Close />
+            </IconButton>
+            <div className={classes.appResponsive}>{links}</div>
           </Drawer>
         </Hidden>
       </AppBar>
@@ -138,8 +129,7 @@ Header.propTypes = {
     "rose",
     "dark"
   ]),
-  rightLinks: PropTypes.node,
-  leftLinks: PropTypes.node,
+  links: PropTypes.node,
   brand: PropTypes.string,
   fixed: PropTypes.bool,
   absolute: PropTypes.bool,
