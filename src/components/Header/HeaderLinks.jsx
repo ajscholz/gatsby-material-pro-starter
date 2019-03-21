@@ -245,7 +245,11 @@ function HeaderLinks({ ...props }) {
       <ListItem className={classes.listItem}>
         <Button
           href="https://www.creative-tim.com/product/material-kit-pro-react"
-          color={window.innerWidth < 960 ? "info" : "white"}
+          color={
+            typeof window !== "undefined" && window.innerWidth < 960
+              ? "info"
+              : "white"
+          }
           target="_blank"
           className={classes.navButton}
           round
